@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛩️ ANAC PPL - Sistema Completo de Preparação</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:,">
+</head>
+<body>
+
+    <!-- Loading inicial -->
+    <div id="loading">
+        <div class="loading-content">
+            <h1>🛩️</h1>
+            <p>Sistema ANAC PPL</p>
+            <div class="spinner"></div>
+            <p id="loadingMsg">Conectando ao servidor...</p>
+            <button id="btnPularLoading" onclick="pularLoading()">
+                Ir para o Login
+            </button>
+        </div>
+    </div>
+
+    <!-- Container principal -->
+    <div id="app">
+
+        <!-- Navbar -->
+        <nav id="navbar">
+            <div class="nav-brand">🛩️ ANAC PPL</div>
+            <div class="nav-links">
+                <button onclick="navegarPara('dashboard')">🏠 Dashboard</button>
+                <button onclick="navegarPara('simulado')">📝 Simulado</button>
+                <button onclick="navegarPara('flashcards')">📚 Flashcards</button>
+                <button onclick="navegarPara('ranking')">🏆 Ranking</button>
+                <button onclick="navegarPara('conquistas')">⭐ Conquistas</button>
+            </div>
+            <div class="nav-user">
+                <span class="user-xp" id="userXP">0 XP</span>
+                <span class="user-level" id="userLevel">Nível 1</span>
+                <span id="userName">Usuário</span>
+                <button class="btn-logout" onclick="logout()">Sair</button>
+            </div>
+        </nav>
+
+        <!-- Tela de Login/Registro -->
+        <div id="authScreen">
+            <div class="auth-container">
+                <div class="auth-logo">
+                    <h1>🛩️ ANAC PPL</h1>
+                    <p>Sistema Completo de Preparação para Piloto Privado</p>
+                </div>
+
+                <!-- Formulário de Login -->
+                <div id="loginForm">
+                    <h2 style="margin-bottom:20px">Entrar</h2>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="loginEmail" placeholder="seu@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Senha</label>
+                        <input type="password" id="loginSenha" placeholder="Sua senha">
+                    </div>
+                    <button onclick="fazerLogin()" class="btn btn-primary">Entrar</button>
+                    <p class="auth-switch">
+                        Não tem conta? <a onclick="mostrarRegistro()">Registre-se</a>
+                    </p>
+                </div>
+
+                <!-- Formulário de Registro -->
+                <div id="registerForm" style="display:none">
+                    <h2 style="margin-bottom:20px">Criar Conta</h2>
+                    <div class="form-group">
+                        <label>Nome completo</label>
+                        <input type="text" id="registerNome" placeholder="Seu nome">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="registerEmail" placeholder="seu@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Senha</label>
+                        <input type="password" id="registerSenha" placeholder="Mínimo 6 caracteres">
+                    </div>
+                    <button onclick="fazerRegistro()" class="btn btn-primary">Criar Conta</button>
+                    <p class="auth-switch">
+                        Já tem conta? <a onclick="mostrarLogin()">Faça login</a>
+                    </p>
+                </div>
+
+                <div style="margin-top:20px;padding:16px;background:#f1f5f9;border-radius:12px;font-size:0.9rem;color:#64748b">
+                    <p><strong>👇 Para testar:</strong></p>
+                    <p>Email: <code>douglas@email.com</code></p>
+                    <p>Senha: <code>123456</code></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tela Principal -->
+        <div id="mainScreen">
+
+            <!-- Dashboard -->
+            <div id="dashboardView" class="view">
+                <div class="dashboard-header">
+                    <h2>Bem-vindo, <span id="dashboardUserName"></span>! 👋</h2>
+                    <p>Continue sua jornada rumo à licença PPL</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📝</div>
+                        <div class="stat-value" id="statQuestoes">0</div>
+                        <div class="stat-label">Questões Respondidas</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">✅</div>
+                        <div class="stat-value" id="statAcertos">0%</div>
+                        <div class="stat-label">Taxa de Acerto</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🎯</div>
+                        <div class="stat-value" id="statSimulados">0</div>
+                        <div class="stat-label">Simulados Realizados</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🔥</div>
+                        <div class="stat-value" id="statSequencia">0</div>
+                        <div class="stat-label">Dias Seguidos</div>
+                    </div>
+                </div>
+
+                <div class="xp-card">
+                    <h3>Progresso de XP</h3>
+                    <div class="xp-bar-container">
+                        <div class="xp-bar-fill" id="xpProgressFill" style="width:0%"></div>
+                    </div>
+                    <div class="xp-bar-labels">
+                        <span>Nível <span id="nivelAtual">1</span></span>
+                        <span><span id="xpAtual">0</span> / <span id="xpProximo">500</span> XP</span>
+                    </div>
+                </div>
+
+                <div class="quick-actions">
+                    <button class="action-card" onclick="navegarPara('simulado')">
+                        <div class="action-icon">📝</div>
+                        <div class="action-title">Simulado</div>
+                        <div class="action-desc">Teste seus conhecimentos</div>
+                    </button>
+                    <button class="action-card" onclick="navegarPara('flashcards')">
+                        <div class="action-icon">📚</div>
+                        <div class="action-title">Flashcards</div>
+                        <div class="action-desc">Repetição espaçada</div>
+                    </button>
+                    <button class="action-card" onclick="navegarPara('ranking')">
+                        <div class="action-icon">🏆</div>
+                        <div class="action-title">Ranking</div>
+                        <div class="action-desc">Compare com outros</div>
+                    </button>
+                    <button class="action-card" onclick="navegarPara('conquistas')">
+                        <div class="action-icon">⭐</div>
+                        <div class="action-title">Conquistas</div>
+                        <div class="action-desc">Desbloqueie badges</div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- View de Simulado -->
+            <div id="simuladoView" class="view" style="display:none">
+                <div class="view-header">
+                    <h2>📝 Simulado</h2>
+                    <p>Teste seus conhecimentos com questões da ANAC</p>
+                </div>
+
+                <div id="simuladoConfig" class="simulado-config">
+                    <h3>Configure seu Simulado</h3>
+                    <div class="form-group">
+                        <label>Matéria</label>
+                        <select id="simuladoMateria" class="form-group select">
+                            <option value="">Todas as Matérias</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Número de Questões</label>
+                        <select id="simuladoQtd">
+                            <option value="5">5 questões (Rápido)</option>
+                            <option value="10" selected>10 questões (Médio)</option>
+                        </select>
+                    </div>
+                    <button onclick="iniciarSimulado()" class="btn btn-primary">
+                        Iniciar Simulado ✈️
+                    </button>
+                </div>
+
+                <div id="simuladoArea" class="simulado-area" style="display:none">
+                    <div class="simulado-header">
+                        <span class="simulado-progress">
+                            Questão <span id="questaoNumero">1</span> de <span id="questaoTotal">10</span>
+                        </span>
+                        <span class="simulado-timer" id="simuladoTempo">00:00</span>
+                    </div>
+                    <div id="questaoContainer"></div>
+                    <div class="simulado-nav">
+                        <button onclick="questaoAnterior()" id="btnAnterior" class="btn btn-secondary" disabled>← Anterior</button>
+                        <button onclick="proximaQuestao()" id="btnProxima" class="btn btn-primary">Próxima →</button>
+                        <button onclick="finalizarSimulado()" id="btnFinalizar" class="btn btn-primary" style="display:none">Finalizar ✅</button>
+                    </div>
+                </div>
+
+                <div id="simuladoResultado" style="display:none"></div>
+            </div>
+
+            <!-- View de Flashcards -->
+            <div id="flashcardsView" class="view" style="display:none">
+                <div class="view-header">
+                    <h2>📚 Flashcards</h2>
+                    <p>Memorize com repetição espaçada</p>
+                </div>
+                <div id="flashcardArea"></div>
+            </div>
+
+            <!-- View de Ranking -->
+            <div id="rankingView" class="view" style="display:none">
+                <div class="view-header">
+                    <h2>🏆 Ranking</h2>
+                    <p>Veja sua posição entre os estudantes</p>
+                </div>
+                <div id="rankingArea"></div>
+            </div>
+
+            <!-- View de Conquistas -->
+            <div id="conquistasView" class="view" style="display:none">
+                <div class="view-header">
+                    <h2>⭐ Conquistas</h2>
+                    <p>Desbloqueie badges e ganhe recompensas</p>
+                </div>
+                <div id="conquistasArea"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast"></div>
+
+    <script src="script.js?v=3"></script>
+</body>
+</html>
